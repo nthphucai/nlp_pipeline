@@ -1,6 +1,7 @@
 from typing import Dict, List
 
 import torch
+from torch.nn.utils.rnn import pad_sequence
 
 
 def trim_batch(input_ids, pad_token_id, attention_mask=None):
@@ -16,9 +17,10 @@ def trim_batch(input_ids, pad_token_id, attention_mask=None):
 # this is necessary because the trainer directly passes this dict as arguments to the model
 # so make sure the keys match the parameter names of the forward method
 class Text2TextDataCollator:
-    def __init__(self, tokenizer, model_type="t5", mode="training", using_tpu=False):
+    def __init__(self, tokenizer, llm_architect="decoder-only", model_type="t5", mode="training", using_tpu=False):
         self.tokenizer = tokenizer
         self.model_type = model_type
+        self.llm_architect = llm_architect
         self.mode = mode
         self.using_tpu = using_tpu
 
@@ -28,16 +30,11 @@ class Text2TextDataCollator:
         Returns:
             A dictionary of tensors
 
-        """
+        """          
         batch = self._generate_batch(batch=batch, padding="longest")
         input_ids = batch["source_ids"]
         target_ids = batch["target_ids"]
         attention_mask = batch["attention_mask"]
-
-        if len(batch.keys()) > 3:
-            node_features = batch["node_features"]
-            edge_index = batch["edge_index"]
-            edge_relation = batch["edge_relation"]
 
         pad_token_id = self.tokenizer.pad_token_id
 
@@ -48,39 +45,55 @@ class Text2TextDataCollator:
             )
             target_ids = trim_batch(target_ids, pad_token_id)
 
-        if self.model_type == "t5":
-            lm_labels = target_ids.clone()
-            decoder_input_ids = self._shift_right_t5(lm_labels)
-            if self.mode == "training":
-                lm_labels[lm_labels[:, :] == pad_token_id] = -100
-        else:
-            decoder_input_ids = target_ids[:, :-1].contiguous()
-            lm_labels = target_ids[:, 1:].clone()
-            if self.mode == "training":
-                lm_labels[target_ids[:, 1:] == pad_token_id] = -100
+        if self.llm_architect == "encoder-decoder":
+            if self.model_type == "t5":
+                lm_labels = target_ids.clone()
+                decoder_input_ids = self._shift_right_t5(lm_labels)
+                if self.mode == "training":
+                    lm_labels[lm_labels[:, :] == pad_token_id] = -100
 
+            elif self.model_type == "bart":
+                decoder_input_ids = target_ids[:, :-1].contiguous()
+                lm_labels = target_ids[:, 1:].clone()
+                if self.mode == "training":
+                    lm_labels[target_ids[:, 1:] == pad_token_id] = -100
+
+        elif self.llm_architect == "decoder-only":
+            lm_labels = input_ids.clone()
+        else:
+            raise ValueError(f"Unsupported model type: {self.llm_architect}")
+        
+        
+        """
+        Some common columns in `encoder-decoder model` and `decoder model`
+        depend on the training task you're performing.
+        Here's a breakdown for different training tasks:
+
+        - Causal Language Modeling (Masked Language Modeling):
+
+        input_ids
+        attention_mask (optional, for padding)
+        
+        - Text Classification:
+        input_ids
+        attention_mask
+        labels
+        
+        - Question Answering:
+        input_ids (containing both question and passage)
+        attention_mask
+        labels (might include start and end positions for the answer)
+
+        """ 
         params = {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
             "labels": lm_labels,
-            "decoder_input_ids": decoder_input_ids,
         }
-        """
-        In case of integrating graph convolution network (gcn).
-        Examples:
-            node_features: torch.randn(2, 8, 64) , # bz, num_entites, embedding_size
-            edge_index: torch.randint(1, 8, (2, 16)) , # 2, bz * num_entites = 4 * 8
-            edge_relation: torch.randn(16) # bz * num_entites = 4 * 8
-        """
-        if len(batch.keys()) > 3:
-            params.update(
-                {
-                    "node_features": node_features,
-                    "edge_index": edge_index,
-                    "edge_relation": edge_relation,
-                }
-            )
 
+        if self.llm_architect == "encoder-decoder":
+            params.update({"decoder_input_ids": decoder_input_ids})
+        
         return params
 
     def _shift_right_t5(self, input_ids):
@@ -110,8 +123,6 @@ class Text2TextDataCollator:
         return shifted_input_ids
 
     def _generate_batch(self, batch: List, padding="longest") -> Dict:
-        from torch.nn.utils.rnn import pad_sequence
-
         if padding == "longest":
             input_ids = pad_sequence(
                 [example["source_ids"] for example in batch], batch_first=True
@@ -123,19 +134,6 @@ class Text2TextDataCollator:
                 [example["attention_mask"] for example in batch], batch_first=True
             )
 
-            if len(batch[0].keys()) > 3:
-                node_features = pad_sequence(
-                    [example["source_subject"] for example in batch], batch_first=True
-                )
-
-                edge_index = pad_sequence(
-                    [example["edge_index"] for example in batch], batch_first=True
-                )
-
-                edge_relation = pad_sequence(
-                    [example["source_rel"] for example in batch], batch_first=True
-                )
-
         else:
             input_ids = torch.stack([example["source_ids"] for example in batch])
             target_ids = torch.stack([example["target_ids"] for example in batch])
@@ -143,27 +141,9 @@ class Text2TextDataCollator:
                 [example["attention_mask"] for example in batch]
             )
 
-            if len(batch[0].keys()) > 3:
-                node_features = torch.stack(
-                    [example["source_subject"] for example in batch]
-                )
-                edge_index = torch.stack([example["edge_index"] for example in batch])
-                edge_relation = torch.stack(
-                    [example["source_rel"] for example in batch]
-                )
-
         encoded_batch = {
             "source_ids": input_ids,
             "target_ids": target_ids,
             "attention_mask": attention_mask,
         }
-        if len(batch[0].keys()) > 3:
-            encoded_batch.update(
-                {
-                    "node_features": node_features,
-                    "edge_index": edge_index,
-                    "edge_relation": edge_relation,
-                }
-            )
-
         return encoded_batch

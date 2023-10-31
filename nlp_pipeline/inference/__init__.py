@@ -1,6 +1,6 @@
 import sys
 
-from .infer_aqg import Inference
+from .generate import Inference
 
 
 sys.dont_write_bytecode = True

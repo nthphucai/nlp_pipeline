@@ -1,0 +1,6 @@
+
+gen_llm:
+  generated_request_len: 256
+  show_progress_bar: False
+  repetition_penalty: 1.2
+  temperature: 0.2

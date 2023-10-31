@@ -6,19 +6,12 @@ class DataProcessor:
         self.max_source_length = max_source_length
         self.max_target_length = max_target_length
         self.model_type = model_type
-        self.hl_token = "<hl>"
 
-        if model_type == "t5":
-            self.sep_token = "<sep>"
-        elif model_type == "bart":
-            self.sep_token = "<sep>"
-        else:
-            self.sep_token = "[SEP]"
+        self.hl_token = "<hl>"
+        self.sep_token = "<sep>"
 
     def process(self, dataset):
-        if self.model_type == "t5":
-            dataset = dataset.map(self._add_eos_examples)
-
+        dataset = dataset.map(self._add_eos_examples)
         dataset = dataset.map(self._add_special_tokens)
         dataset = dataset.map(self._convert_to_features, batched=True)
         return dataset

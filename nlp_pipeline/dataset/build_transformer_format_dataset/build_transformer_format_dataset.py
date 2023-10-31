@@ -1,10 +1,12 @@
-import copy
 import json
 import logging
 from typing import Iterable
 
 import datasets
 import nltk
+
+from constant import INSTRUCTION
+from nlp_pipeline.modules.gen_llm.prompt_template import formatted_prompt
 
 nltk.download("punkt")
 
@@ -14,40 +16,30 @@ _DESCRIPTION = """\Introduction about dataset.
 _CITATION = """\
 """
 
-QG_FORMATS = [
-    "prepend",
-    "highlight",
-    "prepend_highlight",
-]
-class ViquadQGConfig(datasets.BuilderConfig):
-    """BuilderConfig for ViQuAD-QG Datasets."""
+class LLMGenConfig(datasets.BuilderConfig):
 
-    def __init__(self, qg_format="highlight", sub_task="multitask", **kwargs):
-        """BuilderConfig for ViQuAD-QG.
+    def __init__(self, llm_architect:str="encoder-decoder", **kwargs):
+        """BuilderConfig for Datasets.
         Args:
             **kwargs: keyword arguments forwarded to super.
         """
-        super(ViquadQGConfig, self).__init__(**kwargs)
-        self.qg_format = qg_format
-        self.sub_task = sub_task
+        super(LLMGenConfig, self).__init__(**kwargs)
+        self.llm_architect = llm_architect
 
 
-class ViquadQG(datasets.GeneratorBasedBuilder):
-    """ViQuAD-QG: A Vietnamese Dataset for Question Generation. Version 1.1."""
+class Text2TextGeneration(datasets.GeneratorBasedBuilder):
+    """Datasets Information"""
 
     BUILDER_CONFIGS = [
-        ViquadQGConfig(
-            name=f"{format_}_qg_format",
+        LLMGenConfig(
+            name="default",
             version=datasets.Version(
                 "1.1.0", "New split API (https://tensorflow.org/datasets/splits)"
             ),
             description="Plain text",
-            qg_format=format_,
-            sub_task=ViquadQGConfig().sub_task,
+            llm_architect=LLMGenConfig().llm_architect,
         )
-        for format_ in QG_FORMATS
     ]
-
 
     def _info(self):
         features = datasets.Features(
@@ -57,12 +49,11 @@ class ViquadQG(datasets.GeneratorBasedBuilder):
                 "task": datasets.Value("string"),
             }
         )
-
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
             supervised_keys=None,
-            homepage="https://huggingface.co/datasets/thanhns/viquad_qg/tree/main/",
+            homepage="",
             citation=_CITATION,
         )
 
@@ -90,136 +81,48 @@ class ViquadQG(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _get_correct_alignment(self, context, gold_text, start_idx):
-        """
-        Some original examples in ViQuADv1.1 have indices wrong by 1 or 2 character. We test and fix this here.
-        """
-        end_idx = start_idx + len(gold_text)
-        context, gold_text = context.lower(), gold_text.lower()
-
-        # When the gold label position is good
-        if context[start_idx:end_idx] == gold_text:
-            return start_idx, end_idx
-
-        # When the gold label is off by one character
-        elif context[start_idx - 1 : end_idx - 1] == gold_text:
-            return start_idx - 1, end_idx - 1
-
-        # When the gold label is off by two character
-        elif context[start_idx - 2 : end_idx - 2] == gold_text:
-            return start_idx - 2, end_idx - 2
-
-        # When the gold label is off by one character
-        elif context[start_idx + 1 : end_idx + 1] == gold_text:
-            return start_idx + 1, end_idx + 1
-
-    def process_qg_text(
-        self,
-        context: str,
-        question: str,
-        answer: dict,
-    ):
-        answer_text = answer["text"][0]
-        start_idx = answer["answer_start"][0]
-
-        if self.config.qg_format == "prepend":
-            question_gen_input = f"answer: {answer_text} context: {context}"
-        elif self.config.qg_format == "highlight":
-            start_pos, end_pos = self._get_correct_alignment(
-                context, answer_text, start_idx
-            )
-            question_gen_input = f"generate question: {context[:start_pos]} {{hl_token}} {context[start_pos: end_pos]} {{hl_token}} {context[end_pos:]}"
-        else:
-            start_pos, end_pos = self._get_correct_alignment(
-                context, answer_text, start_idx
-            )
-            question_gen_input = f"answer: {context[start_pos: end_pos]} context: {context[:start_pos]} {{hl_token}} {context[start_pos: end_pos]} {{hl_token}} {context[end_pos:]}"
-
-        question_gen_target = f"{question}"
+    def process_text_seg2segLM(self, requirement: str, testcase: dict) -> dict:
+        gen_input = f"requirement: {requirement}"
+        gen_target = "<sep>".join([f"{k} {testcase[k]}" for k in testcase])
 
         examples = {
-            "source_text": question_gen_input,
-            "target_text": question_gen_target,
-            "task": "qg",
+            "source_text": gen_input,
+            "target_text": gen_target,
+            "task": "seg2seg-lm",
         }
 
         return examples
-
-    def process_qa_text(self, context, question, answer):
-        answer_text = answer["text"][0].strip()
-        answer_gen_input = f"question: {question} context: {context}"
-        answer_gen_target = f"{answer_text}"
-
-        examples = {
-            "source_text": answer_gen_input,
-            "target_text": answer_gen_target,
-            "task": "qa",
+    
+ 
+    def process_prompt_casualLM(self, inpt:str, response:str):
+        prompt = formatted_prompt.format(INSTRUCTION, inpt, response)
+        return {
+            "source_text": prompt,
+            "target_text": "",
+            "task": "casual-lm",
         }
-
-        return examples
-
-    def process_answer_extraction(self, article):
-        context = article["context"].strip()
-        sentences = nltk.sent_tokenize(context)
-
-        examples = []
-        source_text = "extract_answer: "
-        for ans in article["answers"]["text"]:
-            ans_lower = ans.lower()
-            sents = copy.deepcopy(sentences)
-            for idc, sent in enumerate(sents):
-                sent_lower = sent.lower()
-                if ans_lower in sent_lower:
-                    sents[idc] = f"{{hl_token}} {sent} {{hl_token}}"
-
-            input_text = f"{source_text}" + " ".join(sents)
-            target_text = f"{ans}" + " {sep_token}"
-
-            examples.append(
-                {
-                    "source_text": input_text,
-                    "target_text": target_text,
-                    "task": "answer_ext",
-                }
-            )
-
-        return examples
 
     def _generate_examples(self, filepath: str) -> Iterable:
         """
         This function returns the examples in the raw (text) form.
         """
         logging.info(f"Generating examples from {filepath}")
-        count = 0
-
         with open(filepath) as f:
-            articles = json.load(f)
+            data = json.load(f)
 
-        for article in articles["data"]:
-            context = article["context"].strip()
-            question = article["question"].strip()
-            answers = article["answers"]
+        input_key = "Requirement Text" #"dialogue"
+        output_key = "Test Cases" #"summary"
 
-            # Generate the examples for answer extraction task.
-            if "answer_ext" in self.config.sub_task:
-                answer_ext_examples = self.process_answer_extraction(article)
-                for answer_ext_example in answer_ext_examples:
-                    yield count, answer_ext_example
-                    count += 1
+        for cnt, item in enumerate(data["data"]):
+        #for cnt, item in enumerate(data):
+            requirement = item[input_key]
+            testcase = item[output_key]
 
-            # Generate the examples for QA, QG task.
-            for task in self.config.sub_task:
-                for start_idx, answer_text in zip(
-                    answers["answer_start"], answers["text"]
-                ):
-                    answer = {
-                        "answer_start": [start_idx],
-                        "text": [answer_text],
-                    }
-                    if task == "qg":
-                        yield count, self.process_qg_text(context, question, answer)
-                        count += 1
-
-                    if task == "qa":
-                        yield count, self.process_qa_text(context, question, answer)
-                        count += 1
+            if self.config.llm_architect == "decoder-only":
+                yield cnt, self.process_prompt_casualLM(requirement, testcase)
+            elif self.config.llm_architect == "encoder-decoder":
+                yield cnt, self.process_text_seg2segLM(requirement, testcase)
+            else:
+                raise NotImplementedError("Only support llm architecture `decoder-only` and `encoder-decoder`")
+ 
+        

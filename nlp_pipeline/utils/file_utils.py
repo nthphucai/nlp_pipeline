@@ -11,8 +11,6 @@ from typing import List, Optional
 import pandas as pd
 import yaml
 
-from constant import PRETRAINED_MODEL_URL_MAP
-
 
 # Setup logging
 logger = logging.getLogger(__name__)

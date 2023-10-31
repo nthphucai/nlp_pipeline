@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := quality
 .PHONY: quality format clean
 
-CHECK_DIRS := questgen
+CHECK_DIRS := nlp_pipeline
 
 # Format source code automatically and check is there are any problems left that need manual fixing
 
@@ -16,4 +16,4 @@ quality:
 	flake8 $(CHECK_DIRS)
 
 clean:
-	find . | grep -E '(\.mypy_cache|__pycache__|__MACOSX|.pytest_cache|\.pyc|\.pyo$$)' | xargs rm -rf
+	find . | grep -E '(\.mypy_cache|__pycache__|.DS_Store|__MACOSX|.pytest_cache|\.pyc|\.pyo$$)' | xargs rm -rf

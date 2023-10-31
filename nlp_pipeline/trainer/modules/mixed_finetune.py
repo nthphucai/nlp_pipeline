@@ -46,9 +46,11 @@ class BestRatioMixedFineTune:
     def _calculate_rate_one_item(self, ratio: float) -> float:
         weights = torch.tensor(
             [
-                ratio / self.len_pretrained_train_ds
-                if i < self.len_new_train_ds
-                else (1 - ratio) / self.len_new_train_ds
+                (
+                    ratio / self.len_pretrained_train_ds
+                    if i < self.len_new_train_ds
+                    else (1 - ratio) / self.len_new_train_ds
+                )
                 for i in range(self.len_total_train_ds)
             ]
         )

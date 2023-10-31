@@ -1,2 +1,2 @@
 # from .eval_aqg import QuestGenEvaluator
-from .run_aqg import QuestGenTrainer
+from .train import QuestGenTrainer
