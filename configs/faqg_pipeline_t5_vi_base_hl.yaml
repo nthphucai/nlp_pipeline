@@ -1,0 +1,43 @@
+version: v0.2
+name: question_generation_pipeline_t5_vi_base_highlight
+type: mc
+
+generate_qa:
+  max_source_length: 512
+  max_target_length: 128
+  num_beams: 4
+  length_penalty: 1.0
+  early_stopping: True
+  qg_format: highlight
+  use_cuda: True
+  batch_size: 4
+  num_answer_sequences: 1
+  num_question_sequences: 1
+  do_sample_answers: True
+  do_sample_question: True
+
+generate_distractors:
+  batch_size: 16
+  use_cuda: True
+  max_source_length: 512
+  max_target_length: 64
+  num_beams: 4
+  num_sequences: 4
+  length_penalty: 1.5
+  repetition_penalty: 2.5
+  do_sample: False
+  num_beam_groups: 4
+  diversity_penalty: 1.0
+  top_p: 0.95
+  early_stopping: True
+
+
+mongodb:
+  user: "nlp"
+  password: "nlp2022"
+  host: "103.119.132.170"
+  port: "27017"
+  database_name: "aqg"
+  generate_collection: "multiple_choice_generation"
+  feedback_collection: "multiple_choice_feedback"
+  response_collection: "cms_feedback"

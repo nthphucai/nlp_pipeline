@@ -1,0 +1,160 @@
+{
+    "data": [
+        {
+            "context": "Đầu thập niên 30, phong trào đấu tranh chống thực dân Hà Lan tiếp tục lan rộng khắp các đảo thuộc In-đô-nê-xi-a, tiêu biểu là cuộc khởi nghĩa của các thủy binh ở cảng Su-ra-bay-a vào năm 1933. Sau khi khủng bố tàn khốc những người khởi nghĩa, chính quyền thực dân tăng cường đàn áp, bắt giữ các lãnh tụ của Đảng Dân tộc (từ năm 1929 là Đảng In-đô-nê-xi-a) và đặt Đảng ra ngoài vòng pháp luật. Cuối thập niên 30, trước nguy cơ của chủ nghĩa phát xít, những người cộng sản đã kết hợp với Đảng In-đô-nê-xi-a, thành lập mặt trận thống nhất chống phát xít với tên gọi Liên minh chính trị In-đô-nê-xi-a. Tháng 12 - 1939, Liên minh chính trị In-đô-nê-xi-a, đứng đầu là Xu-các-nô, đã triệu tập Đại hội đại biểu nhân dân, bao gồm 90 đảng phái và các tổ chức chính trị, biểu thị sự thống nhất dân tộc trong cuộc đấu tranh giành độc lập.",
+            "id": "chatgpt_history_mcqg_002043",
+            "title": "Lịch sử",
+            "section": "Phong trào độc lập dân tộc ở In-đô-nê-xi-a trong thập niên 30 của thế kỉ XX",
+            "keywords": ["Đảng In-đô-nê-xi-a", "mặt trận", "người", "thời gian", "30", "Cuối", "thập niên"],
+            "question": "Những người cộng sản đã kết hợp với Đảng In-đô-nê-xi-a để thành lập mặt trận thống nhất chống phát xít vào thời gian nào?",
+            "answers": {
+                "answer_start": [
+                    393
+                ],
+                "text": [
+                    "cuối thập niên 30"
+                ],
+                "correct_answer": [
+                    "Cuối thập niên 30"
+                ],
+                "correct_option": "B"
+            },
+            "options": [
+                "Đầu thập niên 30",
+                "Cuối thập niên 30",
+                "Đầu thập kỷ 40",
+                "Cuối thập kỷ 40"
+            ],
+            "triples": [
+                [
+                    "phong trào đấu tranh chống thực dân Hà Lan",
+                    "lan rộng",
+                    "các đảo thuộc In-đô-nê-xi-a"
+                ],
+                [
+                    "cuộc khởi nghĩa của các thủy binh",
+                    "xảy ra ở",
+                    "cảng Su-ra-bay-a vào năm 1933"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "tăng cường",
+                    "đàn áp"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "bắt giữ",
+                    "các lãnh tụ của Đảng Dân tộc"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "đặt",
+                    "Đảng ra ngoài vòng pháp luật"
+                ],
+                [
+                    "những người cộng sản",
+                    "kết hợp với",
+                    "Đảng In-đô-nê-xi-a"
+                ],
+                [
+                    "những người cộng sản",
+                    "thành lập",
+                    "mặt trận thống nhất chống phát xít với tên gọi Liên minh chính trị In-đô-nê-xi-a"
+                ],
+                [
+                    "Liên minh chính trị In-đô-nê-xi-a",
+                    "đứng đầu là",
+                    "Xu-các-nô"
+                ],
+                [
+                    "Liên minh chính trị In-đô-nê-xi-a",
+                    "triệu tập",
+                    "Đại hội đại biểu nhân dân"
+                ],
+                [
+                    "Đại hội đại biểu nhân dân",
+                    "bao gồm",
+                    "90 đảng phái và các tổ chức chính trị"
+                ]
+            ]
+        },
+        {
+            "context": "Đầu thập niên 30, phong trào đấu tranh chống thực dân Hà Lan tiếp tục lan rộng khắp các đảo thuộc In-đô-nê-xi-a, tiêu biểu là cuộc khởi nghĩa của các thủy binh ở cảng Su-ra-bay-a vào năm 1933. Sau khi khủng bố tàn khốc những người khởi nghĩa, chính quyền thực dân tăng cường đàn áp, bắt giữ các lãnh tụ của Đảng Dân tộc (từ năm 1929 là Đảng In-đô-nê-xi-a) và đặt Đảng ra ngoài vòng pháp luật. Cuối thập niên 30, trước nguy cơ của chủ nghĩa phát xít, những người cộng sản đã kết hợp với Đảng In-đô-nê-xi-a, thành lập mặt trận thống nhất chống phát xít với tên gọi Liên minh chính trị In-đô-nê-xi-a. Tháng 12 - 1939, Liên minh chính trị In-đô-nê-xi-a, đứng đầu là Xu-các-nô, đã triệu tập Đại hội đại biểu nhân dân, bao gồm 90 đảng phái và các tổ chức chính trị, biểu thị sự thống nhất dân tộc trong cuộc đấu tranh giành độc lập.",
+            "id": "chatgpt_history_mcqg_002044",
+            "title": "Lịch sử",
+            "section": "Phong trào độc lập dân tộc ở In-đô-nê-xi-a trong thập niên 30 của thế kỉ XX",
+            "keywords": ["Khi", "phong trào", "Hà Lan", "thực dân", "đảo", "In-đô-nê-xi-a", "30", "thập niên", "Đầu"],
+            "question": "Khi nào phong trào đấu tranh chống thực dân Hà Lan lan rộng khắp ở các đảo thuộc In-đô-nê-xi-a?",
+            "answers": {
+                "answer_start": [
+                    0
+                ],
+                "text": [
+                    "đầu thập niên 30"
+                ],
+                "correct_answer": [
+                    "Đầu thập niên 30"
+                ],
+                "correct_option": "B"
+            },
+            "options": [
+                "Đầu thập niên 20",
+                "Đầu thập niên 30",
+                "Đầu thập niên 40",
+                "Đầu thập niên 50"
+            ],
+            "triples": [
+                [
+                    "phong trào đấu tranh chống thực dân Hà Lan",
+                    "lan rộng",
+                    "các đảo thuộc In-đô-nê-xi-a"
+                ],
+                [
+                    "cuộc khởi nghĩa của các thủy binh",
+                    "xảy ra ở",
+                    "cảng Su-ra-bay-a vào năm 1933"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "tăng cường",
+                    "đàn áp"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "bắt giữ",
+                    "các lãnh tụ của Đảng Dân tộc"
+                ],
+                [
+                    "chính quyền thực dân",
+                    "đặt",
+                    "Đảng ra ngoài vòng pháp luật"
+                ],
+                [
+                    "những người cộng sản",
+                    "kết hợp với",
+                    "Đảng In-đô-nê-xi-a"
+                ],
+                [
+                    "những người cộng sản",
+                    "thành lập",
+                    "mặt trận thống nhất chống phát xít với tên gọi Liên minh chính trị In-đô-nê-xi-a"
+                ],
+                [
+                    "Liên minh chính trị In-đô-nê-xi-a",
+                    "đứng đầu là",
+                    "Xu-các-nô"
+                ],
+                [
+                    "Liên minh chính trị In-đô-nê-xi-a",
+                    "triệu tập",
+                    "Đại hội đại biểu nhân dân"
+                ],
+                [
+                    "Đại hội đại biểu nhân dân",
+                    "bao gồm",
+                    "90 đảng phái và các tổ chức chính trị"
+                ]
+            ]
+        }
+    ]
+}

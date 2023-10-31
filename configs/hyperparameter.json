@@ -1,0 +1,16 @@
+{
+    "hyperparam" :{
+        "learning_rate": 1e-6,
+        "weight_decay": 1e-6,
+        "per_device_train_batch_size": 4,
+        "dropout_rate": 0.5,
+        "num_layers": 3
+    },
+    "t5-base": {
+        "dropout_rate": 0.3
+    },
+    "t5-enhance": {
+        "centrality": false,
+        "tf_idf": false
+    }
+}

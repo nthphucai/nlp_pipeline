@@ -1,0 +1,30 @@
+[tool.black]
+line-length = 99
+target-version = ['py37']
+
+include = '\.pyi?$'
+
+exclude = '''
+(
+      __pycache__
+    | \btutorials\b
+    | \bbuild\b
+    | \.git
+    | \.mypy_cache
+    | \.pytest_cache
+    | \.vscode
+    | \.venv
+    | \bdist\b
+    | \bdoc\b
+    | \.idea
+)
+'''
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+
+[tool.pytest.ini_options]
+pythonpath = "./"

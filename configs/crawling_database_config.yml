@@ -1,0 +1,15 @@
+mongodb:
+    user: "nlp"
+    password: "nlp2022"
+    host: "103.119.132.170"
+    port: "27017"
+    database_name: "aqg"
+    crawl_collection_name: "test_crawl_data"
+    preprocess_collection_name: "test_preprocess_data"
+
+chatgpt_preprocessor:
+    domain: {
+        "english": "answer",
+        "history": "đáp án"
+    }
+    correct_templates: [ "(Correct)", "(Correct answer)" ]
